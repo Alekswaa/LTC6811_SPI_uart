@@ -30,15 +30,15 @@
     <EraseKey />
     <AsfFrameworkConfig>
       <framework-data xmlns="">
-  <options />
-  <configurations />
-  <files />
-  <documentation help="" />
-  <offline-documentation help="" />
-  <dependencies>
-    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.49.1" />
-  </dependencies>
-</framework-data>
+        <options />
+        <configurations />
+        <files />
+        <documentation help="" />
+        <offline-documentation help="" />
+        <dependencies>
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.49.1" />
+        </dependencies>
+      </framework-data>
     </AsfFrameworkConfig>
     <Compiler>gcc</Compiler>
     <atStartFilePath>.atmelstart\atmel_start_config.atstart</atStartFilePath>
@@ -387,6 +387,12 @@
     <Compile Include="atmel_start_pins.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="bms.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="bms.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Config\hpl_pmc_config.h">
       <SubType>compile</SubType>
     </Compile>
@@ -424,6 +430,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="examples\driver_examples.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="function_def.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="hal\include\hal_atomic.h">
@@ -751,6 +760,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="PEC.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

@@ -57,6 +57,7 @@ SUBDIRS :=  \
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
 ../atmel_start.c \
+../bms.c \
 ../Device_Startup/startup_samv71q21b.c \
 ../Device_Startup/system_samv71q21b.c \
 ../driver_init.c \
@@ -93,6 +94,7 @@ ASM_SRCS +=
 
 OBJS +=  \
 atmel_start.o \
+bms.o \
 Device_Startup/startup_samv71q21b.o \
 Device_Startup/system_samv71q21b.o \
 driver_init.o \
@@ -122,6 +124,7 @@ main.o
 
 OBJS_AS_ARGS +=  \
 atmel_start.o \
+bms.o \
 Device_Startup/startup_samv71q21b.o \
 Device_Startup/system_samv71q21b.o \
 driver_init.o \
@@ -151,6 +154,7 @@ main.o
 
 C_DEPS +=  \
 atmel_start.d \
+bms.d \
 Device_Startup/startup_samv71q21b.d \
 Device_Startup/system_samv71q21b.d \
 driver_init.d \
@@ -180,6 +184,7 @@ main.d
 
 C_DEPS_AS_ARGS +=  \
 atmel_start.d \
+bms.d \
 Device_Startup/startup_samv71q21b.d \
 Device_Startup/system_samv71q21b.d \
 driver_init.d \
@@ -224,6 +229,13 @@ LINKER_SCRIPT_DEP+=  \
 
 # AVR32/GNU C Compiler
 ./atmel_start.o: .././atmel_start.c
+	@echo Building file: $<
+	@echo Invoking: ARM/GNU C Compiler : 6.3.1
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-gcc.exe$(QUOTE)  -x c -mthumb -D__SAMV71Q21B__ -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\arm\CMSIS\5.4.0\CMSIS\Core\Include" -I"../Config" -I".." -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/core" -I"../hpl/pio" -I"../hpl/pmc" -I"../hpl/spi" -I"../hpl/systick" -I"../hpl/uart" -I"../hpl/xdmac" -I"../hri" -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\SAMV71_DFP\2.4.182\samv71b\include"  -Og -ffunction-sections -mlong-calls -g3 -Wall -mcpu=cortex-m7 -c -std=gnu99 -mfloat-abi=softfp -mfpu=fpv4-sp-d16 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+./bms.o: .././bms.c
 	@echo Building file: $<
 	@echo Invoking: ARM/GNU C Compiler : 6.3.1
 	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-gcc.exe$(QUOTE)  -x c -mthumb -D__SAMV71Q21B__ -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\arm\CMSIS\5.4.0\CMSIS\Core\Include" -I"../Config" -I".." -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/core" -I"../hpl/pio" -I"../hpl/pmc" -I"../hpl/spi" -I"../hpl/systick" -I"../hpl/uart" -I"../hpl/xdmac" -I"../hri" -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\SAMV71_DFP\2.4.182\samv71b\include"  -Og -ffunction-sections -mlong-calls -g3 -Wall -mcpu=cortex-m7 -c -std=gnu99 -mfloat-abi=softfp -mfpu=fpv4-sp-d16 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
