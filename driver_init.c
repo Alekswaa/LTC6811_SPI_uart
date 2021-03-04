@@ -13,49 +13,50 @@
 #include <utils.h>
 #include <hpl_spi_base.h>
 
-struct spi_m_sync_descriptor SPI_0;
+struct spi_m_sync_descriptor SPI_1;
 
 struct usart_sync_descriptor USART_1;
 
-void SPI_0_PORT_init(void)
+void SPI_1_PORT_init(void)
 {
+	/**
+	 * PC24 - SCK
+	 * PC25 - NPSC0
+	 * PC26 - MISO
+	 * PC27 - MOSI
+	 * PC28 - Enable LTC6820
+	 */
 	gpio_set_pin_function(PC26, MUX_PC26C_SPI1_MISO);
 	gpio_set_pin_function(PC27, MUX_PC27C_SPI1_MOSI);
 	gpio_set_pin_function(PC24, MUX_PC24C_SPI1_SPCK);
+	gpio_set_pin_function(PC28, GPIO_PIN_FUNCTION_OFF);
+	gpio_set_pin_function(PC25, GPIO_PIN_FUNCTION_OFF);
 	
-	gpio_set_pin_function(PC28, GPIO_PIN_FUNCTION_OFF);// PIO_PC28C_SPI1_NPCS1
+
 	gpio_set_pin_direction(PC28, GPIO_DIRECTION_OUT);
+	gpio_set_pin_direction(PC25, GPIO_DIRECTION_OUT);
 	
-	gpio_set_pin_level(PC25,
-	// <y> Initial level
-	// <id> pad_initial_level
-	// <false"> Low
-	// <true"> High
-	true);
-	
+
+	/*Set initial level of pin*/
+	gpio_set_pin_level(PC25, true);
 	gpio_set_pin_level(PC28, true);
 
-	
-	gpio_set_pin_direction(PC25, GPIO_DIRECTION_OUT);
-	//gpio_set_pin_function(PC25, MUX_PC25C_SPI1_NPCS0);  //NCS0, pin 133
-	
-	/* 1 */
-	gpio_set_pin_function(PC25, GPIO_PIN_FUNCTION_OFF);
-	// gpio_set_pin_function(PC25, PIN_PC25C_SPI1_NPCS0);  //NCS0, pin 133
-	//gpio_set_pin_function(PC25, PIO_PC25C_SPI1_NPCS0);  //NCS0, pin 133
 }
 
-void SPI_0_CLOCK_init(void)
+void SPI_1_CLOCK_init(void)
 {
 	_pmc_enable_periph_clock(ID_SPI1);
 }
 
-void SPI_0_init(void)
+/**
+ * @brief Initialize SPI1 peripheral
+ */
+void SPI_1_init(void)
 {
-	SPI_0_CLOCK_init();
-	spi_m_sync_set_func_ptr(&SPI_0, _spi_get_spi_m_sync());
-	spi_m_sync_init(&SPI_0, SPI1);
-	SPI_0_PORT_init();
+	SPI_1_CLOCK_init();
+	spi_m_sync_set_func_ptr(&SPI_1, _spi_get_spi_m_sync());
+	spi_m_sync_init(&SPI_1, SPI1);
+	SPI_1_PORT_init();
 }
 
 void delay_driver_init(void)
@@ -90,7 +91,7 @@ void system_init(void)
 	/* Disable Watchdog */
 	hri_wdt_set_MR_WDDIS_bit(WDT);
 
-	SPI_0_init();
+	SPI_1_init();
 
 	delay_driver_init();
 

@@ -28,13 +28,13 @@ extern "C" {
 #include <hal_usart_sync.h>
 #include <hpl_uart_base.h>
 
-extern struct spi_m_sync_descriptor SPI_0;
+extern struct spi_m_sync_descriptor SPI_1;
 
 extern struct usart_sync_descriptor USART_1;
 
-void SPI_0_PORT_init(void);
-void SPI_0_CLOCK_init(void);
-void SPI_0_init(void);
+void SPI_1_PORT_init(void);
+void SPI_1_CLOCK_init(void);
+void SPI_1_init(void);
 
 void delay_driver_init(void);
 

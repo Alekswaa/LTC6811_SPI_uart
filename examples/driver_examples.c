@@ -20,8 +20,8 @@ static uint8_t receive_buffer_spi[12];
 void SPI_1_example(void)
 {
 	struct io_descriptor *io;
-	spi_m_sync_get_io_descriptor(&SPI_0, &io);
-	spi_m_sync_enable(&SPI_0);
+	spi_m_sync_get_io_descriptor(&SPI_1, &io);
+	spi_m_sync_enable(&SPI_1);
 
 	struct spi_xfer spi_transmit_buffer;
 	spi_transmit_buffer.txbuf = example_SPI_1;
@@ -31,7 +31,7 @@ void SPI_1_example(void)
 	gpio_set_pin_level(PC25, false); //set cs low. Needs to be done manually yes. 
 	// GPIO_set(CS_PIN_test);
 
-	spi_m_sync_transfer(&SPI_0, &spi_transmit_buffer);
+	spi_m_sync_transfer(&SPI_1, &spi_transmit_buffer);
 	//io_write(io, example_SPI_1, 12);
 	gpio_set_pin_level(PC25, true); //set cs high.
 	// GPIO_clr(CS_PIN_test);

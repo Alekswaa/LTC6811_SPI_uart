@@ -81,7 +81,4 @@ int broadcast_poll(unsigned int);
 void start_cell_voltages_conversion();
 
 
-
-
-
 #endif
