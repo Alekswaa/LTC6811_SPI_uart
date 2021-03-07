@@ -9,6 +9,9 @@
 #define RDCVB       0x0006
 #define RDCVC       0x0008
 #define RDCVD       0x000A
+#define RDSTATA     0x0010
+#define RDSTATB     0x0012
+
 #define LTC6811_REG_SIZE    6
 
 #define MAX_T_READY 10
@@ -73,12 +76,14 @@ void enable_cs();
 void start_com();
 int broadcast_read();
 void get_cell_voltages();
-void isoSpi_send(uint8_t*, int, uint8_t*);
+void isoSpi_send(uint8_t*, int);
+void isoSpi_receive(uint8_t*, int);
 unsigned int PEC_calculate(unsigned char* , int);
 void disable_cs();
 void wakeup_sleep();
 int broadcast_poll(unsigned int);
 void start_cell_voltages_conversion();
+void read_status_ltc(uint16_t*);
 
 
 #endif

@@ -30,7 +30,11 @@ void SPI_1_PORT_init(void)
 	gpio_set_pin_function(PC27, MUX_PC27C_SPI1_MOSI);
 	gpio_set_pin_function(PC24, MUX_PC24C_SPI1_SPCK);
 	gpio_set_pin_function(PC28, GPIO_PIN_FUNCTION_OFF);
-	gpio_set_pin_function(PC25, GPIO_PIN_FUNCTION_OFF);
+	
+	//gpio_set_pin_function(PC25, MUX_PC25C_SPI1_NPCS0);
+	//gpio_set_pin_function(PC25, GPIO_PIN_FUNCTION_OFF);
+	//gpio_set_pin_function(PC25, PIO_PC25C_SPI1_NPCS0);
+	gpio_set_pin_function(PC25, PIN_PC25C_SPI1_NPCS0);
 	
 
 	gpio_set_pin_direction(PC28, GPIO_DIRECTION_OUT);

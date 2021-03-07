@@ -15,6 +15,13 @@ void start_cell_voltages_conversion(){
     return;
 }
 
+void read_status_ltc(uint16_t* status){
+	wakeup_sleep();
+	delay_ms(1);
+	broadcast_read(RDSTATA, 2, (uint8_t*)status);
+	broadcast_read(RDSTATB, 2, (uint8_t*)(status+1));
+}
+
 
 /**
  * \brief IsoSPI send command to LTC6811 through LTC6820
@@ -30,7 +37,7 @@ int broadcast_poll(unsigned int command)
     message[2] = PEC >> 8;
     message[3] = PEC;
 
-    isoSpi_send(&message[0], 4, NULL);
+    isoSpi_send(&message[0], 4);
 
 	return 0;
 }
@@ -58,12 +65,11 @@ int broadcast_read( unsigned int command, unsigned int size, unsigned char *data
     command_message[2] = command_PEC >> 8;
 	command_message[3] = command_PEC;
 
-    isoSpi_send(&command_message[0], 4, NULL);
-    isoSpi_send(NULL, size, data);
-    isoSpi_send(NULL, 2, data_PEC);
+    isoSpi_send(&command_message, 4);
+    isoSpi_receive(data, size);
+    isoSpi_receive(data_PEC, 2);
     PEC = data_PEC[0]<<8 | data_PEC[1];
-    if(PEC_verify(&data[slave*size], size, PEC) < 0) everything_is_valid = false;
-
+    if(PEC_verify(&data[0], size, PEC) < 0) everything_is_valid = false;
 
     if(everything_is_valid == false){
 		print_uart_ln((uint8_t*)"Nope1",5);
@@ -171,7 +177,7 @@ void start_com(){
  * \param[out] receive_data  Pointer for output data using uint8_t data
  * @returns 0 if fine, -1 if wrong PEC
  */
-void isoSpi_send(uint8_t *transfer_data, int size, uint8_t *receive_data){
+void isoSpi_send(uint8_t *transfer_data, int size){
 	struct io_descriptor *io;
 	spi_m_sync_get_io_descriptor(&SPI_1, &io);
 	spi_m_sync_enable(&SPI_1);
@@ -179,14 +185,34 @@ void isoSpi_send(uint8_t *transfer_data, int size, uint8_t *receive_data){
 	
 	struct spi_xfer spi_transmit_buffer;
 	spi_transmit_buffer.size = size;
-	spi_transmit_buffer.rxbuf  = receive_data;
+	//spi_transmit_buffer.rxbuf  = receive_data;
 
 	
 	
-	for(int i = 0; i < size; i++){
-		spi_transmit_buffer.txbuf = &transfer_data[i];
+	//for(int i = 0; i < size; i++){
+		spi_transmit_buffer.txbuf = transfer_data;
 		spi_m_sync_transfer(&SPI_1, &spi_transmit_buffer);
-	}
+	//}
+	
+}
+
+void isoSpi_receive(uint8_t *receive_data, int size){
+	struct io_descriptor *io;
+	spi_m_sync_get_io_descriptor(&SPI_1, &io);
+	spi_m_sync_enable(&SPI_1);
+	//uint16_t delay_100_us = 100;
+	
+	struct spi_xfer spi_transmit_buffer;
+	spi_transmit_buffer.size = size;
+	spi_transmit_buffer.rxbuf  = receive_data;
+
+	uint8_t nothing[10] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
+	
+	
+	//for(int i = 0; i < size; i++){
+		spi_transmit_buffer.txbuf = &nothing;
+		spi_m_sync_transfer(&SPI_1, &spi_transmit_buffer);
+	//}
 	
 }
 
