@@ -14,12 +14,52 @@ void start_cell_voltages_conversion(){
     broadcast_poll(ADCV(MD_NORMAL, DCP_DISCHARGE_NOT_PERMITTED, CH_ALL_CELLS));
     return;
 }
+/**
+ * \brief Write Configuration register group
+ */
+void turn_on_ref(){
+	//uint8_t cfg_refon[6] = {0xFC,0x270&0xFF,(0x697&0x0F)|((0x697&0xF00)>>8),(0x697&0xFF0)>>4,0x00,0x00};
+	uint8_t cfg_refon[6] = {0xFF,0,0,0,0x00,0xFF};
+	enable_cs();
+	//delay_us(10);
+    broadcast_write(WRCFGA, 6, cfg_refon);
+	//delay_us(10);
+	disable_cs();
+    return;
+}
+
 
 void read_status_ltc(uint16_t* status){
+	uint8_t stat1, stat2;
 	wakeup_sleep();
 	delay_ms(1);
-	broadcast_read(RDSTATA, 2, (uint8_t*)status);
-	broadcast_read(RDSTATB, 2, (uint8_t*)(status+1));
+	enable_cs();
+	//broadcast_read(RDSTATA, 2, (uint8_t*)status);
+	broadcast_read((uint8_t)0x01, 2, (uint8_t*)status);
+	//broadcast_read(RDSTATA, 2, &stat1);
+	//disable_cs();
+	//delay_ms(1);
+	//wakeup_sleep();
+	//enable_cs();
+	//broadcast_read(RDSTATB, 2, (uint8_t*)(status+1));
+	disable_cs();
+	//*status = stat1 << 8 | stat2;
+	
+	
+	
+		
+		//wakeup_sleep();
+		//delay_ms(1);
+		//enable_cs();
+		//broadcast_read(RDSTATA, 2, &stat1);
+		////delay_us(10);
+		////disable_cs();
+		////delay_ms(1);
+		////enable_cs();
+		//broadcast_read(RDSTATB, 2, &stat2);
+		////delay_us(10);
+		//disable_cs();
+		//*status = stat1<<8 | stat2;
 }
 
 
@@ -80,6 +120,42 @@ int broadcast_read( unsigned int command, unsigned int size, unsigned char *data
 }
 
 /**
+ * \brief Transmit and receive data from LTC6811. PEC is verified
+ * \param[in] command Command to send to IC
+ * \param[in] size 	 Number of bytes to read. The two bytes for PEC is added in function
+ * \param[out] data  Pointer for output data using uint8_t data
+ * @returns 0 if fine, -1 if wrong PEC
+ */
+int broadcast_write( unsigned int command, unsigned int size, unsigned char *data)
+{
+
+	unsigned char command_message[4];
+	unsigned char data_PEC[2];
+    unsigned int PEC;
+    unsigned int command_PEC;
+    unsigned int slave;
+    unsigned int everything_is_valid = true;
+
+	command_message[0] = 0;
+	command_message[1] = 1;
+    command_PEC = PEC_calculate(command_message, 2);
+    command_message[2] = command_PEC >> 8;
+    command_message[3] = command_PEC;
+
+	uint16_t PEC_data = PEC_calculate(data, size);
+	uint8_t pec_data[2];
+	pec_data[0]  = PEC_data>>8;
+	pec_data[1] = PEC_data&0x00FF;
+
+    isoSpi_send(&command_message, 4);
+    isoSpi_send(data, size);
+    isoSpi_send(pec_data, 2);
+
+    return 0;
+}
+
+
+/**
  * \brief Read voltages from LTC6811
  * \param[out] measured_voltages  Pointer for output data using uint16_t data
  */
@@ -134,22 +210,44 @@ void get_cell_voltages(uint16_t* measured_voltages){
 }
 
 
-
+int16_t pec15Table[256];
+int16_t CRC15_POLY = 0x4599;
 /**
  * \brief Transmit and receive data from LTC6811. PEC is verified
  * \param[in] data Pointer to char array containing PEC
  * \param[in] len  Number of bytes in the PEC
- * @returns 0 if correct, -1 if wrong PEC
+ * @returns the 2 PEC bytes
  */
-unsigned int PEC_calculate(unsigned char *data , int len){
-    unsigned int remainder,address;
+uint16_t PEC_calculate(uint8_t *data , int len){
+	
+    unsigned int remainder, address;
     remainder = 16;/*PEC seed*/
     int i;
     for (i = 0; i < len; i++){
         address = ((remainder >> 7) ^ data[i]) & 0xff;/*calculate PEC table address*/
-        remainder= (remainder << 8 ) ^ crc15Table[address];
+         remainder = (remainder << 8 ) ^ crc15Table[address];
+		//remainder = (remainder << 8 ) ^ pec15Table[address];
     }
-    return((remainder*2)&0xffff);/*The CRC15 has a 0 in the LSB so the final value must be multiplied by 2*/
+    return(remainder*2);/*The CRC15 has a 0 in the LSB so the final value must be multiplied by 2*/
+}
+
+
+void init_PEC15_Table(){
+	unsigned int remainder;
+	for (int i = 0; i < 256; i++){
+		remainder = i << 7;
+		for (int bit = 8; bit > 0; --bit){
+			if (remainder & 0x4000){
+				remainder = ((remainder << 1));
+				remainder = (remainder ^ CRC15_POLY);
+			}
+			else
+			{
+				remainder = ((remainder << 1));
+			}
+		}
+		pec15Table[i] = remainder&0xFFFF;
+	}
 }
 
 int PEC_verify(unsigned char *data, unsigned int n, unsigned int PEC){
@@ -181,18 +279,19 @@ void isoSpi_send(uint8_t *transfer_data, int size){
 	struct io_descriptor *io;
 	spi_m_sync_get_io_descriptor(&SPI_1, &io);
 	spi_m_sync_enable(&SPI_1);
+	spi_m_sync_set_data_order(&SPI_1,SPI_DATA_ORDER_MSB_1ST);
+	spi_m_sync_set_char_size(&SPI_1,SPI_CHAR_SIZE_8); 
 	//uint16_t delay_100_us = 100; 
 	
 	struct spi_xfer spi_transmit_buffer;
-	spi_transmit_buffer.size = size;
+	io_write(io, transfer_data, size);
+	// spi_transmit_buffer.size = size;
 	//spi_transmit_buffer.rxbuf  = receive_data;
-
-	
-	
 	//for(int i = 0; i < size; i++){
-		spi_transmit_buffer.txbuf = transfer_data;
-		spi_m_sync_transfer(&SPI_1, &spi_transmit_buffer);
+		// spi_transmit_buffer.txbuf = transfer_data;
+		// spi_m_sync_transfer(&SPI_1, &spi_transmit_buffer);
 	//}
+	spi_m_sync_disable(&SPI_1);
 	
 }
 

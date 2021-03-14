@@ -11,6 +11,7 @@
 #define RDCVD       0x000A
 #define RDSTATA     0x0010
 #define RDSTATB     0x0012
+#define WRCFGA      0x0001
 
 #define LTC6811_REG_SIZE    6
 
@@ -78,12 +79,14 @@ int broadcast_read();
 void get_cell_voltages();
 void isoSpi_send(uint8_t*, int);
 void isoSpi_receive(uint8_t*, int);
-unsigned int PEC_calculate(unsigned char* , int);
+uint16_t PEC_calculate(unsigned char* , int);
 void disable_cs();
 void wakeup_sleep();
 int broadcast_poll(unsigned int);
 void start_cell_voltages_conversion();
 void read_status_ltc(uint16_t*);
+int broadcast_write(unsigned int, unsigned int, unsigned char*);
+void turn_on_ref();
 
 
 #endif
