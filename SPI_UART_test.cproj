@@ -178,7 +178,7 @@
       </AcmeProjectConfig>
     </AcmeProjectConfig>
     <avrtool>com.atmel.avrdbg.tool.atmelice</avrtool>
-    <avrtoolserialnumber>J41800025580</avrtoolserialnumber>
+    <avrtoolserialnumber>J42700027956</avrtoolserialnumber>
     <avrdeviceexpectedsignature>0xA1220E00</avrdeviceexpectedsignature>
     <com_atmel_avrdbg_tool_atmelice>
       <ToolOptions>
@@ -188,7 +188,7 @@
         <InterfaceName>SWD</InterfaceName>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.atmelice</ToolType>
-      <ToolNumber>J41800025580</ToolNumber>
+      <ToolNumber>J42700027956</ToolNumber>
       <ToolName>Atmel-ICE</ToolName>
     </com_atmel_avrdbg_tool_atmelice>
     <avrtoolinterface>SWD</avrtoolinterface>

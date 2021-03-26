@@ -17,6 +17,7 @@ void start_cell_voltages_conversion(){
 /**
  * \brief Write Configuration register group
  */
+/*
 void turn_on_ref(){
 	//uint8_t cfg_refon[6] = {0xFC,0x270&0xFF,(0x697&0x0F)|((0x697&0xF00)>>8),(0x697&0xFF0)>>4,0x00,0x00};
 	uint8_t cfg_refon[6] = {0xFF,0,0,0,0x00,0xFF};
@@ -26,9 +27,10 @@ void turn_on_ref(){
 	//delay_us(10);
 	disable_cs();
     return;
-}
+}*/
 
 
+/*
 void read_status_ltc(uint16_t* status){
 	uint8_t stat1, stat2;
 	wakeup_sleep();
@@ -43,7 +45,7 @@ void read_status_ltc(uint16_t* status){
 	//enable_cs();
 	//broadcast_read(RDSTATB, 2, (uint8_t*)(status+1));
 	disable_cs();
-	//*status = stat1 << 8 | stat2;
+	// *status = stat1 << 8 | stat2;
 	
 	
 	
@@ -59,8 +61,8 @@ void read_status_ltc(uint16_t* status){
 		//broadcast_read(RDSTATB, 2, &stat2);
 		////delay_us(10);
 		//disable_cs();
-		//*status = stat1<<8 | stat2;
-}
+		status = stat1<<8 | stat2;
+//}*/
 
 
 /**
@@ -89,35 +91,33 @@ int broadcast_poll(unsigned int command)
  * \param[out] data  Pointer for output data using uint8_t data
  * @returns 0 if fine, -1 if wrong PEC
  */
-int broadcast_read( unsigned int command, unsigned int size, unsigned char *data)
-{
-
-	unsigned char command_message[4];
-	unsigned char data_PEC[2];
-    unsigned int PEC;
-    unsigned int command_PEC;
-    unsigned int slave;
-    unsigned int everything_is_valid = true;
-
-	command_message[0] = command >> 8;
-	command_message[1] = command;
-    command_PEC = PEC_calculate(command_message, 2);
-    command_message[2] = command_PEC >> 8;
-	command_message[3] = command_PEC;
-
-    isoSpi_send(&command_message, 4);
-    isoSpi_receive(data, size);
-    isoSpi_receive(data_PEC, 2);
-    PEC = data_PEC[0]<<8 | data_PEC[1];
-    if(PEC_verify(&data[0], size, PEC) < 0) everything_is_valid = false;
-
-    if(everything_is_valid == false){
-		print_uart_ln((uint8_t*)"Nope1",5);
-        return -1;
-    }
-
-    return 0;
-}
+//int broadcast_read( unsigned int command, unsigned int size, unsigned char *data)
+//{
+//
+	//unsigned char command_message[4];
+	//unsigned char data_PEC[2];
+    //unsigned int command_PEC;
+    //unsigned int everything_is_valid = true;
+//
+	//command_message[0] = command >> 8;
+	//command_message[1] = command;
+    //command_PEC = PEC_calculate(command_message, 2);
+    //command_message[2] = command_PEC >> 8;
+	//command_message[3] = command_PEC;
+//
+    //isoSpi_send(command_message, 4);
+    //isoSpi_receive(data, size);
+    //isoSpi_receive(data_PEC, 2);
+    ////PEC = data_PEC[0]<<8 | data_PEC[1];
+    ////if(PEC_verify(&data[0], size, PEC) < 0) everything_is_valid = false;
+//
+    ////if(everything_is_valid == false){
+		////print_uart_ln((uint8_t*)"Nope1",5);
+        ////return -1;
+    ////}
+//
+    //return 0;
+//}
 
 /**
  * \brief Transmit and receive data from LTC6811. PEC is verified
@@ -126,46 +126,47 @@ int broadcast_read( unsigned int command, unsigned int size, unsigned char *data
  * \param[out] data  Pointer for output data using uint8_t data
  * @returns 0 if fine, -1 if wrong PEC
  */
-int broadcast_write( unsigned int command, unsigned int size, unsigned char *data)
-{
-
-	unsigned char command_message[4];
-	unsigned char data_PEC[2];
-    unsigned int PEC;
-    unsigned int command_PEC;
-    unsigned int slave;
-    unsigned int everything_is_valid = true;
-
-	command_message[0] = 0;
-	command_message[1] = 1;
-    command_PEC = PEC_calculate(command_message, 2);
-    command_message[2] = command_PEC >> 8;
-    command_message[3] = command_PEC;
-
-	uint16_t PEC_data = PEC_calculate(data, size);
-	uint8_t pec_data[2];
-	pec_data[0]  = PEC_data>>8;
-	pec_data[1] = PEC_data&0x00FF;
-
-    isoSpi_send(&command_message, 4);
-    isoSpi_send(data, size);
-    isoSpi_send(pec_data, 2);
-
-    return 0;
-}
+//int broadcast_write( unsigned int command, unsigned int size, unsigned char *data)
+//{
+//
+	//unsigned char command_message[4];
+	//unsigned char data_PEC[2];
+    //unsigned int PEC;
+    //unsigned int command_PEC;
+    //unsigned int slave;
+    //unsigned int everything_is_valid = true;
+//
+	//command_message[0] = 0;
+	//command_message[1] = 1;
+    //command_PEC = PEC_calculate(command_message, 2);
+    //command_message[2] = command_PEC >> 8;
+    //command_message[3] = command_PEC;
+//
+	//uint16_t PEC_data = PEC_calculate(data, size);
+	//uint8_t pec_data[2];
+	//pec_data[0]  = PEC_data>>8;
+	//pec_data[1] = PEC_data&0x00FF;
+//
+    //isoSpi_send(&command_message, 4);
+    //isoSpi_send(data, size);
+    //isoSpi_send(pec_data, 2);
+//
+    //return 0;
+//}
 
 
 /**
  * \brief Read voltages from LTC6811
  * \param[out] measured_voltages  Pointer for output data using uint16_t data
  */
+/*
 void get_cell_voltages(uint16_t* measured_voltages){
     uint16_t voltages[3 * BATTERY_SERIES_STACKS];
     uint16_t stack, cell;
 
-    /*
+    / *
      * Collect cells 0-2 (group A) from each LTC6811
-     */
+     * /
     broadcast_read(RDCVA, LTC6811_REG_SIZE, (uint8_t*)voltages);
 
     for(stack = 0; stack < BATTERY_SERIES_STACKS; ++stack){
@@ -174,9 +175,9 @@ void get_cell_voltages(uint16_t* measured_voltages){
         }
     }
 
-    /*
+    / *
      * Collect cells 3-5 (group B) from each LTC6811
-     */
+     * /
     broadcast_read(RDCVB, LTC6811_REG_SIZE, (uint8_t*)voltages);
 
     for(stack = 0; stack < BATTERY_SERIES_STACKS; ++stack){
@@ -185,9 +186,9 @@ void get_cell_voltages(uint16_t* measured_voltages){
         }
     }
 
-    /*
+    / *
      * Collect cells 6-8 (group C) from each LTC6811
-     */
+     * /
     broadcast_read(RDCVC, LTC6811_REG_SIZE, (uint8_t*)voltages);
 
     for(stack = 0; stack < BATTERY_SERIES_STACKS; ++stack){
@@ -195,9 +196,9 @@ void get_cell_voltages(uint16_t* measured_voltages){
            	measured_voltages[cell+6] = voltages[cell];
         }
     }
-    /*
+    / *
      * Collect cells 9-11 (group D) from each LTC6811
-     */
+     * /
     broadcast_read(RDCVB, LTC6811_REG_SIZE, (uint8_t*)voltages);
 
     for(stack = 0; stack < BATTERY_SERIES_STACKS; ++stack){
@@ -207,7 +208,7 @@ void get_cell_voltages(uint16_t* measured_voltages){
     }
 
     return;
-}
+}*/
 
 
 int16_t pec15Table[256];
@@ -278,40 +279,27 @@ void start_com(){
 void isoSpi_send(uint8_t *transfer_data, int size){
 	struct io_descriptor *io;
 	spi_m_sync_get_io_descriptor(&SPI_1, &io);
-	spi_m_sync_enable(&SPI_1);
-	spi_m_sync_set_data_order(&SPI_1,SPI_DATA_ORDER_MSB_1ST);
-	spi_m_sync_set_char_size(&SPI_1,SPI_CHAR_SIZE_8); 
-	//uint16_t delay_100_us = 100; 
+
 	
-	struct spi_xfer spi_transmit_buffer;
 	io_write(io, transfer_data, size);
-	// spi_transmit_buffer.size = size;
-	//spi_transmit_buffer.rxbuf  = receive_data;
-	//for(int i = 0; i < size; i++){
-		// spi_transmit_buffer.txbuf = transfer_data;
-		// spi_m_sync_transfer(&SPI_1, &spi_transmit_buffer);
-	//}
-	spi_m_sync_disable(&SPI_1);
-	
 }
 
-void isoSpi_receive(uint8_t *receive_data, int size){
+void isoSpi_receive(uint8_t *receive_data, int num_bytes){
 	struct io_descriptor *io;
 	spi_m_sync_get_io_descriptor(&SPI_1, &io);
 	spi_m_sync_enable(&SPI_1);
-	//uint16_t delay_100_us = 100;
-	
-	struct spi_xfer spi_transmit_buffer;
-	spi_transmit_buffer.size = size;
-	spi_transmit_buffer.rxbuf  = receive_data;
 
-	uint8_t nothing[10] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
+	uint8_t* nothing = malloc(num_bytes);
+	memset(nothing, 0xFF, num_bytes);
+
+	struct spi_xfer spi_transmit_buffer;
+	spi_transmit_buffer.size  = num_bytes;
+	spi_transmit_buffer.rxbuf = receive_data;
+	spi_transmit_buffer.txbuf = nothing;
+
+	spi_m_sync_transfer(&SPI_1, &spi_transmit_buffer);
 	
-	
-	//for(int i = 0; i < size; i++){
-		spi_transmit_buffer.txbuf = &nothing;
-		spi_m_sync_transfer(&SPI_1, &spi_transmit_buffer);
-	//}
+	free(nothing);
 	
 }
 

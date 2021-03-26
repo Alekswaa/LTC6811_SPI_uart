@@ -2,16 +2,19 @@
 #define BMS_H_INCLUDED
 
 #include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 
 
 #define BATTERY_SERIES_STACKS   1
+/*
 #define RDCVA       0x0004
 #define RDCVB       0x0006
 #define RDCVC       0x0008
 #define RDCVD       0x000A
 #define RDSTATA     0x0010
 #define RDSTATB     0x0012
-#define WRCFGA      0x0001
+#define WRCFGA      0x0001*/
 
 #define LTC6811_REG_SIZE    6
 
