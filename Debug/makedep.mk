@@ -56,5 +56,7 @@ hpl\uart\hpl_uart.c
 
 hpl\xdmac\hpl_xdmac.c
 
+iso_spi_main_functions.c
+
 main.c
 

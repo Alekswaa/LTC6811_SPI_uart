@@ -772,6 +772,9 @@
     <Compile Include="hri\hri_xdmac_v71b.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="iso_spi_main_functions.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>

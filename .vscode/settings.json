@@ -1,5 +1,9 @@
 {
     "files.associations": {
-        "ltc6811.h": "c"
+        "ltc6811.h": "c",
+        "cmath": "c",
+        "array": "c",
+        "string": "c",
+        "string_view": "c"
     }
 }

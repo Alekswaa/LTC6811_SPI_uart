@@ -83,6 +83,7 @@ C_SRCS +=  \
 ../hpl/systick/hpl_systick_ARMv7_base.c \
 ../hpl/uart/hpl_uart.c \
 ../hpl/xdmac/hpl_xdmac.c \
+../iso_spi_main_functions.c \
 ../main.c
 
 
@@ -120,6 +121,7 @@ hpl/spi/hpl_spi.o \
 hpl/systick/hpl_systick_ARMv7_base.o \
 hpl/uart/hpl_uart.o \
 hpl/xdmac/hpl_xdmac.o \
+iso_spi_main_functions.o \
 main.o
 
 OBJS_AS_ARGS +=  \
@@ -150,6 +152,7 @@ hpl/spi/hpl_spi.o \
 hpl/systick/hpl_systick_ARMv7_base.o \
 hpl/uart/hpl_uart.o \
 hpl/xdmac/hpl_xdmac.o \
+iso_spi_main_functions.o \
 main.o
 
 C_DEPS +=  \
@@ -180,6 +183,7 @@ hpl/spi/hpl_spi.d \
 hpl/systick/hpl_systick_ARMv7_base.d \
 hpl/uart/hpl_uart.d \
 hpl/xdmac/hpl_xdmac.d \
+iso_spi_main_functions.d \
 main.d
 
 C_DEPS_AS_ARGS +=  \
@@ -210,6 +214,7 @@ hpl/spi/hpl_spi.d \
 hpl/systick/hpl_systick_ARMv7_base.d \
 hpl/uart/hpl_uart.d \
 hpl/xdmac/hpl_xdmac.d \
+iso_spi_main_functions.d \
 main.d
 
 OUTPUT_FILE_PATH +=SPI_UART_test.elf
@@ -411,6 +416,13 @@ hpl/uart/hpl_uart.o: ../hpl/uart/hpl_uart.c
 	
 
 hpl/xdmac/hpl_xdmac.o: ../hpl/xdmac/hpl_xdmac.c
+	@echo Building file: $<
+	@echo Invoking: ARM/GNU C Compiler : 6.3.1
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-gcc.exe$(QUOTE)  -x c -mthumb -D__SAMV71Q21B__ -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\arm\CMSIS\5.4.0\CMSIS\Core\Include" -I"../Config" -I".." -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/core" -I"../hpl/pio" -I"../hpl/pmc" -I"../hpl/spi" -I"../hpl/systick" -I"../hpl/uart" -I"../hpl/xdmac" -I"../hri" -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\SAMV71_DFP\2.4.182\samv71b\include"  -Og -ffunction-sections -mlong-calls -g3 -Wall -mcpu=cortex-m7 -c -std=gnu99 -mfloat-abi=softfp -mfpu=fpv4-sp-d16 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+./iso_spi_main_functions.o: .././iso_spi_main_functions.c
 	@echo Building file: $<
 	@echo Invoking: ARM/GNU C Compiler : 6.3.1
 	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\arm\arm-gnu-toolchain\bin\arm-none-eabi-gcc.exe$(QUOTE)  -x c -mthumb -D__SAMV71Q21B__ -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\arm\CMSIS\5.4.0\CMSIS\Core\Include" -I"../Config" -I".." -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/core" -I"../hpl/pio" -I"../hpl/pmc" -I"../hpl/spi" -I"../hpl/systick" -I"../hpl/uart" -I"../hpl/xdmac" -I"../hri" -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\SAMV71_DFP\2.4.182\samv71b\include"  -Og -ffunction-sections -mlong-calls -g3 -Wall -mcpu=cortex-m7 -c -std=gnu99 -mfloat-abi=softfp -mfpu=fpv4-sp-d16 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
