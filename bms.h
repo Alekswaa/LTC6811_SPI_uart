@@ -8,6 +8,7 @@
 
 /* BMS hardware setup parameters */
 #define CELLS_PER_SLAVE 12
+#define GPIO_PER_SLAVE 6
 #define NUMBER_OF_SLAVES 1
 #define BYTES_IN_VOLTAGE_REG 6
 #define LTC6811_DAISYCHAIN_ALL_VOLTAGES (NUMBER_OF_SLAVES*CELLS_PER_SLAVE)
@@ -26,8 +27,10 @@
 #define PLADC	0x0714
 
 #define RDAUXA  0x000C
+#define RDAUXB  0x000E
 #define RDSTATA 0x0010
 #define RDSTATB 0x0012
+#define ADAX    0x0460
 
 #define REFON 1<<2
 #define ADCOPT_ON  1
@@ -47,6 +50,7 @@ void bms_enable_cs();
 void bms_disable_cs();
 
 void bms_read_cell_voltages(uint16_t*);
+void bms_read_GPIO(uint16_t*);
 void isoSpi_send(uint8_t*, int);
 void isoSpi_receive(uint8_t*, int);
 uint16_t PEC_calculate(unsigned char* , int);

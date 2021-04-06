@@ -26,16 +26,19 @@ int main(void)
 	// uint8_t str[11] = "Hello world";
 	//print_uart_ln(str, 11);
 
-	//bms_init_ltc6811();
+	bms_init_ltc6811();
 	//delay_us(100);
 	//uint16_t* voltage_buffer = malloc(LTC6811_DAISYCHAIN_ALL_VOLTAGES*sizeof(uint16_t));
 	//uint16_t* voltage_buffer = malloc(3*sizeof(uint16_t));
-	uint16_t voltage_buffer[12]={0};
+	uint16_t voltage_buffer[CELLS_PER_SLAVE]={0};
+	uint16_t GPIO_buffer[GPIO_PER_SLAVE]={0xFF};
 	uint8_t hc, lc;
-	uint16_t delimiter = 0xAAAA;
+	uint16_t delimiterV = 0xAAAA;
+	uint16_t delimiterG = 0xBBBB;
 	while(1)
 	{
 		wake_up_ltc();
+		bms_init_ltc6811();
 		bms_read_cell_voltages(voltage_buffer);
 		
 		for(int i = 0; i < 12; i++){
@@ -44,8 +47,20 @@ int main(void)
 			print_uart(&hc, 1);
 			print_uart(&lc, 1);
 		}
-		print_uart((uint8_t*)&delimiter, 2);
+		print_uart((uint8_t*)&delimiterV, 2);
+		
+		bms_read_GPIO(GPIO_buffer);
+
+		for(int i = 0; i < 6; i++){
+			hc = GPIO_buffer[i]>>8;
+			lc = GPIO_buffer[i]&0xFF;
+			print_uart(&hc, 1);
+			print_uart(&lc, 1);
+		}
+		print_uart((uint8_t*)&delimiterG, 2);
+		delay_us(10);
 	}
+	
 	return 0;
 }
 

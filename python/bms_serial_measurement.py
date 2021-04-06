@@ -3,7 +3,8 @@ import sys
 import os
 BAUDRATE = 38400
 ser = None
-DELIMITER = "aaaa"
+DELIMITERV = "aaaa"
+DELIMITERG = "bbbb"
 
 '''
 run script by either: python3 bms_serial_measurement.py
@@ -32,7 +33,7 @@ if __name__ == "__main__":
         com_port = init(first_time = False)
     
     try:
-        ser = serial.Serial(com_port, BAUDRATE, timeout=10)
+        ser = serial.Serial(com_port, BAUDRATE, timeout=20)
         while(1):
             data = int.from_bytes(ser.read(1), "big")
             print(data)
@@ -44,10 +45,19 @@ if __name__ == "__main__":
         voltages = []
         while(1):
             data = int.from_bytes(ser.read(2), "big")
-            if hex(data)[2:] ==  DELIMITER:
-                print("Delimiter found, printing voltages:")
+            if hex(data)[2:] ==  DELIMITERV:
+                # print("Delimiter found, printing voltages:")
                 for count, volt in enumerate(voltages):
-                    print(f"Voltage {count+1} - {volt:.4f}V")
+                    # print(f"Voltage {count+1} - {volt:.4f}V")
+                    pass
+                # print("-"*20)
+                voltages = []
+            elif hex(data)[2:] ==  DELIMITERG:
+                print("Delimiter found, printing Temperatures:")
+                for count, volt in enumerate(voltages):
+                    
+                    print(f"Temperature {count+1} - {volt:.6f}*C")
+                    pass
                 print("-"*20)
                 voltages = []
             else:
